@@ -8,6 +8,7 @@ import com.submitIo.service.ApplyFormUserAuthService;
 import com.submitIo.service.FormService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,17 +22,27 @@ public class PublicController {
     private final FormService formService;
     private final UploadFormUserAuthService uploadFormUserAuthService;
 
-    @PostMapping("/create/user/upload-form")
-    public ResponseEntity<String> createUploadFormUser(@RequestBody UploadFormUserEntity uploadFormUserEntity){
-        return uploadFormUserAuthService.createUser(uploadFormUserEntity);
+    @PostMapping("/upload-form/signup")
+    public ResponseEntity<String> uploadFormSignup(@RequestBody UploadFormUserEntity uploadFormUserEntity){
+        return uploadFormUserAuthService.signup(uploadFormUserEntity);
     }
 
-    @PostMapping("/create/user/apply-form")
-    public ResponseEntity<ApplyFormUserEntity> createApplyFormUser(@RequestBody ApplyFormUserEntity applyFormUserEntity){
-        return applyFormUserAuthService.createUser(applyFormUserEntity);
+    @PostMapping("/upload-form/login")
+    public ResponseEntity<String> uploadFormLogin(@RequestBody UploadFormUserEntity uploadFormUserEntity){
+        return uploadFormUserAuthService.login(uploadFormUserEntity);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/apply-form/signup")
+    public ResponseEntity<ApplyFormUserEntity> applyFormSignup(@RequestBody ApplyFormUserEntity applyFormUserEntity){
+        return applyFormUserAuthService.signup(applyFormUserEntity);
+    }
+
+    @PostMapping("/apply-form/login")
+    public ResponseEntity<String> applyFormLogin(@RequestBody ApplyFormUserEntity applyFormUserEntity){
+        return applyFormUserAuthService.login(applyFormUserEntity);
+    }
+
+    @GetMapping("/form/all")
     public ResponseEntity<List<FormEntity>> allForms(){
         return formService.getAllForms();
     }

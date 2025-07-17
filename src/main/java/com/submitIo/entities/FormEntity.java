@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class FormEntity {
 
     @Id
-    private String formId;
+    private String id;
     private String userId;
     private String category;
     private String deadline;

@@ -2,9 +2,14 @@ package com.submitIo.service;
 
 import com.submitIo.entities.UploadFormUserEntity;
 import com.submitIo.repository.UploadFormRepository;
+import com.submitIo.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -17,17 +22,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class UploadFormUserAuthService implements UserDetailsService {
+public class UploadFormUserAuthService{
 
     private final UploadFormRepository uploadFormRepository;
-    private static final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsServiceUploadFormImpl userDetailsServiceUploadFormImpl;
+    private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<String> createUser(UploadFormUserEntity uploadFormUserEntity) {
+    public ResponseEntity<String> signup(UploadFormUserEntity uploadFormUserEntity) {
         String encodedPassword = passwordEncoder.encode(uploadFormUserEntity.getPassword());
         uploadFormUserEntity.setPassword(encodedPassword );
-        uploadFormUserEntity.setRoles(Arrays.asList("UPLOAD-FORM"));
+        uploadFormUserEntity.setRoles(Arrays.asList("UPLOAD"));
         UploadFormUserEntity saved = uploadFormRepository.save(uploadFormUserEntity);
         return new ResponseEntity<>("Created upload form user: "+saved, HttpStatus.CREATED);
     }
@@ -60,16 +69,22 @@ public class UploadFormUserAuthService implements UserDetailsService {
         return new ResponseEntity<>("User not Logged In,",HttpStatus.BAD_REQUEST);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UploadFormUserEntity userEntity=uploadFormRepository.findByUsername(username);
-        if(userEntity!=null){
-            return User.builder()
-                    .username(userEntity.getUsername())
-                    .password(userEntity.getPassword())
-                    .roles(userEntity.getRoles().toArray(new String[0]))
-                    .build();
+    public ResponseEntity<String> login(UploadFormUserEntity uploadFormUserEntity) {
+        try {
+            log.info("Authenticating upload form user: {}", uploadFormUserEntity.getUsername());
+//            System.out.println("Raw password: " + uploadFormUserEntity.getPassword());
+//            System.out.println("DB Encoded password: " + userDetails.getPassword());
+//            System.out.println("Password match? " + passwordEncoder.matches(uploadFormUserEntity.getPassword(), userDetails.getPassword()));
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(uploadFormUserEntity.getUsername(),uploadFormUserEntity.getPassword()));
+            UserDetails userDetails = userDetailsServiceUploadFormImpl.loadUserByUsername(uploadFormUserEntity.getUsername());
+
+            String jwt = jwtUtil.generateToken(userDetails.getUsername());
+
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Authentication failed: ", e);
+            return new ResponseEntity<>("Incorrect username or password", HttpStatus.BAD_REQUEST);
         }
-        throw new UsernameNotFoundException("User not found with username: "+username);
     }
 }

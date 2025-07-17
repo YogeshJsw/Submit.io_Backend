@@ -2,9 +2,13 @@ package com.submitIo.service;
 
 import com.submitIo.entities.ApplyFormUserEntity;
 import com.submitIo.repository.UserRepository;
+import com.submitIo.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -20,22 +24,14 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ApplyFormUserAuthService implements UserDetailsService {
+@Slf4j
+public class ApplyFormUserAuthService{
 
     private final UserRepository userRepository;
     private static final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
-
-     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-         ApplyFormUserEntity applyFormUserEntity =userRepository.findByUsername(username);
-         if(applyFormUserEntity !=null){
-             return User.builder()
-                     .username(applyFormUserEntity.getUsername())
-                     .password(applyFormUserEntity.getPassword())
-                     .roles(applyFormUserEntity.getRoles().toArray(new String[0]))
-                     .build();
-         }
-         throw new UsernameNotFoundException("User not found with username: "+username);
-     }
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsServiceApplyFormImpl userDetailsServiceApplyFormImpl;
 
     public ResponseEntity<?> getAllUsers() {
         List<ApplyFormUserEntity> all = userRepository.findAll();
@@ -44,7 +40,7 @@ public class ApplyFormUserAuthService implements UserDetailsService {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<ApplyFormUserEntity> createUser(ApplyFormUserEntity applyFormUserEntity) {
+    public ResponseEntity<ApplyFormUserEntity> signup(ApplyFormUserEntity applyFormUserEntity) {
         String encodedPassword = passwordEncoder.encode(applyFormUserEntity.getPassword());
         applyFormUserEntity.setPassword(encodedPassword );
         applyFormUserEntity.setRoles(Arrays.asList("USER"));
@@ -82,5 +78,18 @@ public class ApplyFormUserAuthService implements UserDetailsService {
         applyFormUserEntity.setRoles(Arrays.asList("USER","ADMIN"));
         ApplyFormUserEntity saved = userRepository.save(applyFormUserEntity);
         return new ResponseEntity<>("Created Admin user: "+saved, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<String> login(ApplyFormUserEntity applyFormUserEntity) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(applyFormUserEntity.getUsername(), applyFormUserEntity.getPassword()));
+            UserDetails userDetails = userDetailsServiceApplyFormImpl.loadUserByUsername(applyFormUserEntity.getUsername());
+            String jwt=jwtUtil.generateToken(userDetails.getUsername());
+            return new ResponseEntity<>(jwt,HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error("Exception occured while creating Authentication token for upload form login: "+e);
+            return new ResponseEntity<>("Incorrect username or password",HttpStatus.BAD_REQUEST);
+        }
     }
 }
