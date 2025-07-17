@@ -8,12 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/r/form")
+@RequestMapping("/form")
 @RequiredArgsConstructor
-public class FormController {
+public class FormApi {
 
     private final FormService formService;
 

@@ -41,24 +41,4 @@ public class PublicController {
     public ResponseEntity<String> applyFormLogin(@RequestBody ApplyFormUserEntity applyFormUserEntity){
         return applyFormUserAuthService.login(applyFormUserEntity);
     }
-
-    @GetMapping("/form/all")
-    public ResponseEntity<List<FormEntity>> allForms(){
-        return formService.getAllForms();
-    }
-
-    @GetMapping("/examName/{examName}")
-    public ResponseEntity<List<FormEntity>> formByName(@PathVariable String examName){
-        return formService.getFormByExamName(examName);
-    }
-
-    @GetMapping("/hostName/{examHostName}")
-    public ResponseEntity<List<FormEntity>> formByHostName(@PathVariable String examHostName){
-        return formService.getFormByExamHostName(examHostName);
-    }
-
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<FormEntity>> formByCategory(@PathVariable String category){
-        return formService.getFormByCategory(category);
-    }
 }

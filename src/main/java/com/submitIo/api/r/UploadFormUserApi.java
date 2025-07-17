@@ -7,18 +7,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/r/upload-form")
+@RequestMapping("/upload")
 @RequiredArgsConstructor
-public class UploadFormUserController {
+public class UploadFormUserApi {
 
     private final UploadFormUserAuthService uploadFormUserAuthService;
 
-    @PutMapping("/update")
+    @PutMapping("/user-details/update")
     public ResponseEntity<?> updateUser(@RequestBody UploadFormUserEntity uploadFormUserEntity){
         return uploadFormUserAuthService.updateUser(uploadFormUserEntity);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/user-details/delete")
     public ResponseEntity<?> deleteUser(){
         return uploadFormUserAuthService.deleteUser();
     }

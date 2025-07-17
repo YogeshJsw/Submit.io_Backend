@@ -32,10 +32,10 @@ public class SpringSecurity{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/apply/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/r/upload-form/**").hasAnyRole("UPLOAD","ADMIN")
-                        .requestMatchers("/r/form/**").hasAnyRole("UPLOAD","ADMIN")
-                        .requestMatchers("/r/user/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/upload/**").hasAnyRole("UPLOAD","ADMIN")
+                        .requestMatchers("/form/**").hasAnyRole("UPLOAD","ADMIN")
                         .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
