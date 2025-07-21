@@ -1,4 +1,4 @@
-package com.submitIo.service;
+package com.submitIo.service.authService;
 
 import com.submitIo.entities.ApplyFormUserEntity;
 import com.submitIo.repository.UserRepository;
@@ -11,10 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -41,6 +38,7 @@ public class ApplyFormUserAuthService{
     }
 
     public ResponseEntity<ApplyFormUserEntity> signup(ApplyFormUserEntity applyFormUserEntity) {
+
         String encodedPassword = passwordEncoder.encode(applyFormUserEntity.getPassword());
         applyFormUserEntity.setPassword(encodedPassword );
         applyFormUserEntity.setRoles(Arrays.asList("USER"));
@@ -48,22 +46,24 @@ public class ApplyFormUserAuthService{
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> updateUser(ApplyFormUserEntity applyFormUserEntity) {
-
+    public ResponseEntity<String> updateUser(ApplyFormUserEntity applyFormUserEntity) {
+        if(applyFormUserEntity.getUsername()==null)
+            return new ResponseEntity<>("Please enter username",HttpStatus.BAD_REQUEST);
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserName = authenticatedUser.getName();
 
         ApplyFormUserEntity userIdDb=userRepository.findByUsername(authenticatedUserName);
         if(userIdDb!=null){
             userIdDb.setUsername(applyFormUserEntity.getUsername());
-            userIdDb.setPassword(passwordEncoder.encode(applyFormUserEntity.getPassword()));
+            if(applyFormUserEntity.getPassword()!=null)
+                userIdDb.setPassword(passwordEncoder.encode(applyFormUserEntity.getPassword()));
             userRepository.save(userIdDb);
             return new ResponseEntity<>("User updated: "+userIdDb,HttpStatus.OK);
         }
         return new ResponseEntity<>("Username does not exist",HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<?> deleteUser() {
+    public ResponseEntity<String> deleteUser() {
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
         if(authentication!=null) {
             ApplyFormUserEntity applyFormUserEntity = userRepository.deleteByUsername(authentication.getName());

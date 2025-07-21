@@ -1,18 +1,16 @@
 package com.submitIo.filter;
 
-import com.submitIo.service.UserDetailsServiceApplyFormImpl;
-import com.submitIo.service.UserDetailsServiceUploadFormImpl;
+import com.submitIo.service.authService.UserDetailsServiceApplyFormImpl;
+import com.submitIo.service.authService.UserDetailsServiceUploadFormImpl;
 import com.submitIo.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,9 +37,15 @@ public class JwtFilter  extends OncePerRequestFilter{
             String path = request.getRequestURI();
             UserDetails userDetails;
 
-            if (path.startsWith("/r/upload-form") || path.startsWith("/r/form")) {
+            if(path.startsWith("/query/form")){
                 userDetails = userDetailsServiceUploadForm.loadUserByUsername(username);
-            } else if (path.startsWith("/r/apply-form")) {
+                if(userDetails==null){
+                    userDetails = userDetailsServiceApplyForm.loadUserByUsername(username);
+                }
+            }
+            else if (path.startsWith("/upload") || path.startsWith("/form") || path.startsWith("/aws")) {
+                userDetails = userDetailsServiceUploadForm.loadUserByUsername(username);
+            } else if (path.startsWith("/apply")) {
                 userDetails = userDetailsServiceApplyForm.loadUserByUsername(username);
             } else {
                 chain.doFilter(request, response);

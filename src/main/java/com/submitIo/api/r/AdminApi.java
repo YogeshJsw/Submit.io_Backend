@@ -1,7 +1,7 @@
 package com.submitIo.api.r;
 
 import com.submitIo.entities.ApplyFormUserEntity;
-import com.submitIo.service.ApplyFormUserAuthService;
+import com.submitIo.service.authService.ApplyFormUserAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.submitIo.service;
+package com.submitIo.service.authService;
 
 import com.submitIo.entities.ApplyFormUserEntity;
 import com.submitIo.repository.UserRepository;

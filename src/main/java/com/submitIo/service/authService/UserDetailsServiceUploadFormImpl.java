@@ -1,9 +1,7 @@
-package com.submitIo.service;
+package com.submitIo.service.authService;
 
-import com.submitIo.entities.ApplyFormUserEntity;
 import com.submitIo.entities.UploadFormUserEntity;
 import com.submitIo.repository.UploadFormRepository;
-import com.submitIo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;

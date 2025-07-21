@@ -7,6 +7,7 @@ import com.submitIo.repository.FormRepository;
 import com.submitIo.repository.UploadFormRepository;
 import com.submitIo.requestDto.UpdateFormRequestDto;
 import com.submitIo.requestDto.UploadFormRequestDto;
+import com.submitIo.responseDto.UploadFormResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,38 +29,53 @@ public class FormService {
     private final UploadFormRepository uploadFormRepository;
 
 
-    public ResponseEntity<FormEntity> uploadNewForm(UploadFormRequestDto uploadFormRequestDto) {
-//        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
-//        String authenticatedUserName = authenticatedUser.getName();
-//        UploadFormUserEntity uploadFormUserEntity = uploadFormRepository.findByUsername(authenticatedUserName);
-//        if(uploadFormUserEntity == null || uploadFormUserEntity.getRoles().contains("USER")){
-//            log.error("User: {} does not have required permission."+authenticatedUserName);
-//            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
+    public ResponseEntity<UploadFormResponseDto> uploadNewForm(UploadFormRequestDto uploadFormRequestDto) {
         FormEntity formEntity = objectMapper.convertValue(uploadFormRequestDto, FormEntity.class);
+        formEntity.setUploadedBy(SecurityContextHolder.getContext().getAuthentication().getName());
         FormEntity savedForm = formRepository.save(formEntity);
+        UploadFormResponseDto uploadFormResponseDto = objectMapper.convertValue(formEntity, UploadFormResponseDto.class);
         if(savedForm.getId()==null)
-            return new ResponseEntity<>(savedForm, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(savedForm,HttpStatus.CREATED);
+            return new ResponseEntity<>(uploadFormResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(uploadFormResponseDto,HttpStatus.CREATED);
     }
 
-    public ResponseEntity<List<FormEntity>> getAllForms() {
-        return new ResponseEntity<>(formRepository.findAll(),HttpStatus.OK);
+    public ResponseEntity<List<UploadFormResponseDto>> getAllForms() {
+        List<FormEntity> formEntities = formRepository.findAll();
+        List<UploadFormResponseDto> uploadFormResponseDtos = new ArrayList<>();
+        for(FormEntity formEntity:formEntities){
+            uploadFormResponseDtos.add(objectMapper.convertValue(formEntity, UploadFormResponseDto.class));
+        }
+        return new ResponseEntity<>(uploadFormResponseDtos,HttpStatus.OK);
     }
 
-    public ResponseEntity<List<FormEntity>> getFormByExamName(String examName) {
-        return new ResponseEntity<>(formRepository.findByExamName(examName),HttpStatus.OK);
+    public ResponseEntity<List<UploadFormResponseDto>> getFormByExamName(String examName) {
+        List<FormEntity> formEntities = formRepository.findByExamName(examName);
+        List<UploadFormResponseDto> uploadFormResponseDtos = new ArrayList<>();
+        for(FormEntity formEntity:formEntities){
+            uploadFormResponseDtos.add(objectMapper.convertValue(formEntity, UploadFormResponseDto.class));
+        }
+        return new ResponseEntity<>(uploadFormResponseDtos,HttpStatus.OK);
     }
 
-    public ResponseEntity<List<FormEntity>> getFormByExamHostName(String examHostName) {
-        return new ResponseEntity<>(formRepository.findByExamHostName(examHostName),HttpStatus.OK);
+    public ResponseEntity<List<UploadFormResponseDto>> getFormByExamHostName(String examHostName) {
+        List<FormEntity> formEntities = formRepository.findByExamHostName(examHostName);
+        List<UploadFormResponseDto> uploadFormResponseDtos = new ArrayList<>();
+        for(FormEntity formEntity:formEntities){
+            uploadFormResponseDtos.add(objectMapper.convertValue(formEntity, UploadFormResponseDto.class));
+        }
+        return new ResponseEntity<>(uploadFormResponseDtos,HttpStatus.OK);
     }
 
-    public ResponseEntity<List<FormEntity>> getFormByCategory(String category) {
-        return new ResponseEntity<>(formRepository.findByCategory(category),HttpStatus.OK);
+    public ResponseEntity<List<UploadFormResponseDto>> getFormByCategory(String category) {
+        List<FormEntity> formEntities = formRepository.findByCategory(category);
+        List<UploadFormResponseDto> uploadFormResponseDtos = new ArrayList<>();
+        for(FormEntity formEntity:formEntities){
+            uploadFormResponseDtos.add(objectMapper.convertValue(formEntity, UploadFormResponseDto.class));
+        }
+        return new ResponseEntity<>(uploadFormResponseDtos,HttpStatus.OK);
     }
 
-    public ResponseEntity<FormEntity> updateForm(UpdateFormRequestDto updateFormRequestDto) {
+    public ResponseEntity<UploadFormResponseDto> updateForm(UpdateFormRequestDto updateFormRequestDto) {
         FormEntity formEntity=formRepository.findById(updateFormRequestDto.getId()).orElse(null);
         if(formEntity==null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -85,13 +102,14 @@ public class FormService {
         if(updateFormRequestDto.getStatus()!=null)
             formEntity.setStatus(updateFormRequestDto.getStatus());
         formRepository.save(formEntity);
-        return new ResponseEntity<>(formEntity,HttpStatus.OK);
+        UploadFormResponseDto uploadFormResponseDto = objectMapper.convertValue(formEntity, UploadFormResponseDto.class);
+        return new ResponseEntity<>(uploadFormResponseDto,HttpStatus.OK);
     }
 
-    public ResponseEntity<FormEntity> deleteForm(String id) {
+    public ResponseEntity<String> deleteForm(String id) {
         if(!formRepository.existsById(id))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Form not found with id: "+id,HttpStatus.BAD_REQUEST);
         formRepository.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Form deleted",HttpStatus.OK);
     }
 }

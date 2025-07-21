@@ -1,21 +1,16 @@
 package com.submitIo.config;
 
 import com.submitIo.filter.JwtFilter;
-import com.submitIo.service.ApplyFormUserAuthService;
-import com.submitIo.service.UploadFormUserAuthService;
-import com.submitIo.service.UserDetailsServiceApplyFormImpl;
-import com.submitIo.service.UserDetailsServiceUploadFormImpl;
+import com.submitIo.service.authService.UserDetailsServiceApplyFormImpl;
+import com.submitIo.service.authService.UserDetailsServiceUploadFormImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,10 +31,12 @@ public class SpringSecurity{
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/upload/**").hasAnyRole("UPLOAD","ADMIN")
                         .requestMatchers("/form/**").hasAnyRole("UPLOAD","ADMIN")
+                        .requestMatchers("/query/form/**").hasAnyRole("USER","UPLOAD","ADMIN")
+                        .requestMatchers("/aws/**").hasAnyRole("UPLOAD","ADMIN")
                         .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

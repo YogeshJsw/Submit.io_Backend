@@ -9,10 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
+@Document(collection = "")
 @Data
 @RequiredArgsConstructor
-@Document(collection = "users")
-public class ApplyFormUserEntity {
+public class ApplyFormUserEmailSignupEntity {
 
     @Id
     private String id;
@@ -21,8 +21,7 @@ public class ApplyFormUserEntity {
     @Indexed(unique = true)
     private String email;
     private String password;
-//    @DBRef
+    private boolean isVerified=false;
     private List<FormEntity> appliedForms=new ArrayList<>();
     private List<String> roles;
-
 }
