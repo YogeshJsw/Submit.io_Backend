@@ -6,24 +6,20 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "applyFormUsersUnverified")
+@Document(collection = "applyFormUsersVerified")
 @Data
 @RequiredArgsConstructor
-public class ApplyFormUserEmailSignupEntity {
-
+public class ApplyFormUserEmailVerified {
     @Id
     private String id;
     private String username;
     @Indexed(unique = true)
     private String email;
     private String password;
-    private boolean isVerified=false;
-    private List<FormEntity> appliedForms=new ArrayList<>();
     private List<String> roles;
-    private String otp;
-    private Instant otpGeneratedAt;
+    private List<FormEntity> appliedForms = new ArrayList<>();
 }
+

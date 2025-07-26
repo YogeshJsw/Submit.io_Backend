@@ -13,7 +13,7 @@ import java.util.List;
 @Document(collection = "applyFormUsersUnverified")
 @Data
 @RequiredArgsConstructor
-public class ApplyFormUserEmailSignupEntity {
+public class ApplyFormUserEmailUnverified {
 
     @Id
     private String id;

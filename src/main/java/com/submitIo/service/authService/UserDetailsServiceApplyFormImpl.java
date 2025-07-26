@@ -1,7 +1,7 @@
 package com.submitIo.service.authService;
 
-import com.submitIo.entities.ApplyFormUserEntity;
-import com.submitIo.repository.UserRepository;
+import com.submitIo.entities.ApplyFormUserEmailSignupEntity;
+import com.submitIo.repository.ApplyFormEmailSignupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,16 +13,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceApplyFormImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
+    private final ApplyFormEmailSignupRepository applyFormEmailSignupRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ApplyFormUserEntity applyFormUserEntity =userRepository.findByUsername(username);
-        if(applyFormUserEntity !=null){
+        ApplyFormUserEmailSignupEntity applyFormUserEmailSignupEntity =applyFormEmailSignupRepository.findByUsername(username);
+        if(applyFormUserEmailSignupEntity !=null){
             return User.builder()
-                    .username(applyFormUserEntity.getUsername())
-                    .password(applyFormUserEntity.getPassword())
-                    .roles(applyFormUserEntity.getRoles().toArray(new String[0]))
+                    .username(applyFormUserEmailSignupEntity.getUsername())
+                    .password(applyFormUserEmailSignupEntity.getPassword())
+                    .roles(applyFormUserEmailSignupEntity.getRoles().toArray(new String[0]))
                     .build();
         }
         throw new UsernameNotFoundException("User not found with username: "+username);

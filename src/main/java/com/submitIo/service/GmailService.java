@@ -1,5 +1,6 @@
 package com.submitIo.service;
 
+import com.submitIo.responseDto.OtpVerificationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,17 @@ public class GmailService {
     private String last_OTP;
     private Instant otpTimeStamp;
 
-    public ResponseEntity<String> sendOtp(String userEmailToSendTo){
+    public OtpVerificationResponseDto generateOtp(){
         String otp=String.format("%05d", new Random().nextInt(100000));
         last_OTP=otp;
         otpTimeStamp=Instant.now();
+        OtpVerificationResponseDto otpVerificationResponseDto = new OtpVerificationResponseDto();
+        otpVerificationResponseDto.setOtp(otp);
+        otpVerificationResponseDto.setOtpGeneratedAt(otpTimeStamp);
+        return otpVerificationResponseDto;
+    }
 
+    public ResponseEntity<String> sendOtp(String userEmailToSendTo){
         SimpleMailMessage message=new SimpleMailMessage();
         message.setFrom(ADMIN_GMAIL_ID);
         message.setTo(userEmailToSendTo);

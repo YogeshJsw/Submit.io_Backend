@@ -1,5 +1,6 @@
 package com.submitIo.api.r;
 
+import com.submitIo.entities.ApplyFormUserEmailSignupEntity;
 import com.submitIo.entities.ApplyFormUserEntity;
 import com.submitIo.service.authService.ApplyFormUserAuthService;
 import com.submitIo.service.FormService;
@@ -17,8 +18,8 @@ public class ApplyFormAuthApi {
 
     //user details
     @PutMapping("/user-details/update")
-    public ResponseEntity<String> updateUser(@RequestBody ApplyFormUserEntity applyFormUserEntity){
-        return applyFormUserAuthService.updateUser(applyFormUserEntity);
+    public ResponseEntity<String> updateUser(@RequestBody ApplyFormUserEmailSignupEntity applyFormUserEmailSignupEntity){
+        return applyFormUserAuthService.updateUser(applyFormUserEmailSignupEntity);
     }
 
     @DeleteMapping("/user-details/delete")

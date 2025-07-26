@@ -1,7 +1,9 @@
 package com.submitIo.api.u;
 
+import com.submitIo.entities.ApplyFormUserEmailSignupEntity;
 import com.submitIo.entities.UploadFormUserEntity;
 import com.submitIo.entities.ApplyFormUserEntity;
+import com.submitIo.requestDto.ApplyFormUserEmailSignupRequestDto;
 import com.submitIo.service.authService.UploadFormUserAuthService;
 import com.submitIo.service.authService.ApplyFormUserAuthService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +29,12 @@ public class PublicController {
     }
 
     @PostMapping("/apply-form/signup")
-    public ResponseEntity<ApplyFormUserEntity> applyFormSignup(@RequestBody ApplyFormUserEntity applyFormUserEntity){
-        return applyFormUserAuthService.signup(applyFormUserEntity);
+    public ResponseEntity<ApplyFormUserEmailSignupEntity> applyFormSignup(@RequestBody ApplyFormUserEmailSignupRequestDto applyFormUserEmailSignupRequestDto){
+        return applyFormUserAuthService.signup(applyFormUserEmailSignupRequestDto);
     }
 
     @PostMapping("/apply-form/login")
-    public ResponseEntity<String> applyFormLogin(@RequestBody ApplyFormUserEntity applyFormUserEntity){
-        return applyFormUserAuthService.login(applyFormUserEntity);
+    public ResponseEntity<String> applyFormLogin(@RequestBody ApplyFormUserEmailSignupEntity applyFormUserEmailSignupEntity){
+        return applyFormUserAuthService.login(applyFormUserEmailSignupEntity);
     }
 }

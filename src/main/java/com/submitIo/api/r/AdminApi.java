@@ -1,5 +1,6 @@
 package com.submitIo.api.r;
 
+import com.submitIo.entities.ApplyFormUserEmailSignupEntity;
 import com.submitIo.entities.ApplyFormUserEntity;
 import com.submitIo.service.authService.ApplyFormUserAuthService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class AdminApi {
     }
 
     @PostMapping("/create-admin-user")
-    public ResponseEntity<?> createAdminUser(@RequestBody ApplyFormUserEntity applyFormUserEntity){
-        return applyFormUserAuthService.createAdminUser(applyFormUserEntity);
+    public ResponseEntity<?> createAdminUser(@RequestBody ApplyFormUserEmailSignupEntity applyFormUserEmailSignupEntity){
+        return applyFormUserAuthService.createAdminUser(applyFormUserEmailSignupEntity);
     }
 }
