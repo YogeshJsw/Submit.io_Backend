@@ -39,9 +39,9 @@ public class JwtFilter  extends OncePerRequestFilter{
             String path = request.getRequestURI();
             UserDetails userDetails;
 
-            if (path.startsWith("/r/upload-form") || path.startsWith("/r/form")) {
+            if (path.startsWith("/upload") || path.startsWith("/form")) {
                 userDetails = userDetailsServiceUploadForm.loadUserByUsername(username);
-            } else if (path.startsWith("/r/apply-form")) {
+            } else if (path.startsWith("/apply")) {
                 userDetails = userDetailsServiceApplyForm.loadUserByUsername(username);
             } else {
                 chain.doFilter(request, response);

@@ -1,8 +1,6 @@
 package com.submitIo.config;
 
 import com.submitIo.filter.JwtFilter;
-import com.submitIo.service.ApplyFormUserAuthService;
-import com.submitIo.service.UploadFormUserAuthService;
 import com.submitIo.service.UserDetailsServiceApplyFormImpl;
 import com.submitIo.service.UserDetailsServiceUploadFormImpl;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,10 +27,10 @@ public class SpringSecurity{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/apply/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/apply/**").hasRole("USER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/upload/**").hasAnyRole("UPLOAD","ADMIN")
-                        .requestMatchers("/form/**").hasAnyRole("UPLOAD","ADMIN")
+                        .requestMatchers("/upload/**").hasRole("UPLOAD")
+                        .requestMatchers("/form/**").hasRole("UPLOAD")
                         .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

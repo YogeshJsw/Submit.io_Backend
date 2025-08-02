@@ -9,6 +9,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
+//profile (CRUD)
+//API token
+//specific client access
+//media-service
+//migration of db
+
 @Data
 @RequiredArgsConstructor
 @Document(collection = "users")
