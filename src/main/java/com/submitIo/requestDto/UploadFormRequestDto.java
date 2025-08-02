@@ -8,8 +8,6 @@ import org.springframework.data.annotation.Id;
 @RequiredArgsConstructor
 public class UploadFormRequestDto {
 
-    @Id
-    private String id;
     private String category;
     private String deadline;
     private String eligibility;

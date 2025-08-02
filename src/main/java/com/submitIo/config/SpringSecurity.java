@@ -1,8 +1,8 @@
 package com.submitIo.config;
 
 import com.submitIo.filter.JwtFilter;
-import com.submitIo.service.UserDetailsServiceApplyFormImpl;
-import com.submitIo.service.UserDetailsServiceUploadFormImpl;
+import com.submitIo.service.authService.UserDetailsServiceApplyFormImpl;
+import com.submitIo.service.authService.UserDetailsServiceUploadFormImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,14 +27,16 @@ public class SpringSecurity{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/apply/**").hasRole("USER")
+                        .requestMatchers("/apply/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/upload/**").hasRole("UPLOAD")
-                        .requestMatchers("/form/**").hasRole("UPLOAD")
+                        .requestMatchers("/upload/**").hasAnyRole("UPLOAD","ADMIN")
+                        .requestMatchers("/form/**").hasAnyRole("UPLOAD","ADMIN")
+                        .requestMatchers("/query/form/**").hasAnyRole("USER","UPLOAD","ADMIN")
+                        .requestMatchers("/aws/**").hasAnyRole("UPLOAD","ADMIN")
                         .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

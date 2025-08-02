@@ -1,18 +1,12 @@
-package com.submitIo.entities;
-
+package com.submitIo.responseDto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "forms")
 @Data
 @RequiredArgsConstructor
-public class FormEntity {
+public class UploadFormResponseDto {
 
-    @Id
-    private String id;
     private String category;
     private String deadline;
     private String eligibility;
@@ -24,5 +18,4 @@ public class FormEntity {
     private String examIcon;
     private String link;
     private String status;
-    private String uploadedBy;
 }

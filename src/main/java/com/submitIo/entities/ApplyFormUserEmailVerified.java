@@ -9,26 +9,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-//profile (CRUD)
-//API token
-//specific client access
-//media-service
-//migration of db
-
+@Document(collection = "applyFormUsersVerified")
 @Data
 @RequiredArgsConstructor
-@Document(collection = "users")
-public class ApplyFormUserEntity {
-
+public class ApplyFormUserEmailVerified {
     @Id
     private String id;
-
     private String username;
     @Indexed(unique = true)
     private String email;
     private String password;
-//    @DBRef
-    private List<FormEntity> appliedForms=new ArrayList<>();
     private List<String> roles;
-
+    private List<FormEntity> appliedForms = new ArrayList<>();
 }
+
